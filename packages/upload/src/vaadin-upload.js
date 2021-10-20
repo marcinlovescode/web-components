@@ -467,6 +467,10 @@ class Upload extends KeyboardMixin(ElementMixin(ThemableMixin(PolymerElement))) 
   _onKeyDown(e) {
     super._onKeyDown(e);
 
+    if (this.$.addButton.matches(':focus')) {
+      return;
+    }
+
     if (e.key === 'ArrowDown') {
       this.__focusedFileIndex = Math.min(this.__focusedFileIndex + 1, this.files.length - 1);
     } else if (e.key === 'ArrowUp') {

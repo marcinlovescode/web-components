@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload</title>
+
+    <script type="module">
+      import '@vaadin/upload';
+      import '@vaadin/text-field';
+
+      const upload = document.querySelector('vaadin-upload');
+      upload.files = [
+        { name: 'Annual Report.docx', complete: true },
+        {
+          name: 'Workflow.pdf',
+          progress: 60,
+          status: '19.7 MB: 60% (remaining time: 00:12:34)'
+        },
+        { name: 'Financials.xlsx', error: 'An error occurred' }
+      ];
+    </script>
+  </head>
+
+  <body>
+    <h1>Upload keyboard navigation proto</h1>
+    <ul>
+      <li>If the upload button is focused</li>
+      <ul>
+        <li><b>Tab:</b> Focuses a file menu item</li>
+      </ul>
+
+      <li>If a file menu item is focused</li>
+      <ul>
+        <li><b>Tab:</b> Focuses the next tabbable element on the page</li>
+        <li><b>Shift-Tab:</b> Focuses the upload button</li>
+        <li><b>Esc:</b> Focuses the upload button</li>
+        <li><b>ArrowUp:</b> Focuses the previous menu item</li>
+        <li><b>ArrowDown:</b> Focuses the next menu item</li>
+        <li><b>ArrowRight:</b> Focuses a file control button inside the item</li>
+      </ul>
+
+      <li>If a file control button inside one file menu item is focused</li>
+      <ul>
+        <li><b>Tab:</b> Focuses the next tabbable element on the page</li>
+        <li><b>Shift-Tab:</b> Focuses the file menu item</li>
+        <li><b>Esc:</b> Focuses the file menu item</li>
+        <li><b>ArrowUp:</b> Focuses the previous menu item</li>
+        <li><b>ArrowDown:</b> Focuses the next menu item</li>
+        <li><b>ArrowRight:</b> Focuses the next file control button</li>
+        <li><b>ArrowLeft:</b> Focuses the previous file control button or the file menu item</li>
+      </ul>
+    </ul>
+
+    <vaadin-text-field label="Field before" autofocus></vaadin-text-field>
+    <vaadin-upload target="/api/fileupload"></vaadin-upload>
+    <vaadin-text-field label="Field after"></vaadin-text-field>
+
+
+
+  </body>
+</html>
