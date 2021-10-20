@@ -7,6 +7,7 @@ import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { resetMouseCanceller } from '@polymer/polymer/lib/utils/gestures.js';
 import '@polymer/polymer/lib/elements/dom-repeat.js';
 import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
+import { KeyboardMixin } from '@vaadin/component-base/src/keyboard-mixin.js';
 import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import '@vaadin/button/src/vaadin-button.js';
 import './vaadin-upload-icons.js';
@@ -61,7 +62,7 @@ import './vaadin-upload-file.js';
  * @mixes ThemableMixin
  * @mixes ElementMixin
  */
-class Upload extends ElementMixin(ThemableMixin(PolymerElement)) {
+class Upload extends KeyboardMixin(ElementMixin(ThemableMixin(PolymerElement))) {
   static get template() {
     return html`
       <style>
@@ -100,11 +101,18 @@ class Upload extends ElementMixin(ThemableMixin(PolymerElement)) {
         </div>
       </div>
       <slot name="file-list">
-        <ul id="fileList" part="file-list">
+        <div id="fileList" part="file-list" role="menu">
           <template is="dom-repeat" items="[[files]]" as="file">
-            <vaadin-upload-file file="[[file]]" i18n="[[i18n]]"></vaadin-upload-file>
+            <vaadin-upload-file
+              file="[[file]]"
+              i18n="[[i18n]]"
+              role="menuitem"
+              focused="[[__isFileFocused(index, __focusedFileIndex)]]"
+              aria-setsize$="[[__getCount(files)]]"
+              aria-posinset$="[[index]]"
+            ></vaadin-upload-file>
           </template>
-        </ul>
+        </div>
       </slot>
       <slot></slot>
       <input
@@ -225,6 +233,11 @@ class Upload extends ElementMixin(ThemableMixin(PolymerElement)) {
         value: function () {
           return [];
         }
+      },
+
+      __focusedFileIndex: {
+        type: Number,
+        value: 0
       },
 
       /**
@@ -447,6 +460,20 @@ class Upload extends ElementMixin(ThemableMixin(PolymerElement)) {
     this.addEventListener('file-start', this._onFileStart.bind(this));
   }
 
+  __getCount(list) {
+    return list.length;
+  }
+
+  _onKeyDown(e) {
+    super._onKeyDown(e);
+
+    if (e.key === 'ArrowDown') {
+      this.__focusedFileIndex = Math.min(this.__focusedFileIndex + 1, this.files.length - 1);
+    } else if (e.key === 'ArrowUp') {
+      this.__focusedFileIndex = Math.max(this.__focusedFileIndex - 1, 0);
+    }
+  }
+
   /** @private */
   _formatSize(bytes) {
     if (typeof this.i18n.formatSize === 'function') {
@@ -472,6 +499,11 @@ class Upload extends ElementMixin(ThemableMixin(PolymerElement)) {
     }
 
     return timeValues;
+  }
+
+  /** @private */
+  __isFileFocused(index, focusedFileIndex) {
+    return index === focusedFileIndex;
   }
 
   /** @private */
@@ -859,6 +891,7 @@ class Upload extends ElementMixin(ThemableMixin(PolymerElement)) {
 
   /** @private */
   _onFileAbort(event) {
+    this.$.addButton.focus();
     this._abortFileUpload(event.detail.file);
   }
 

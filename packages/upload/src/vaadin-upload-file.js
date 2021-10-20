@@ -5,6 +5,7 @@
  */
 import { PolymerElement, html } from '@polymer/polymer/polymer-element.js';
 import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
+import { KeyboardMixin } from '@vaadin/component-base/src/keyboard-mixin.js';
 import '@vaadin/progress-bar/src/vaadin-progress-bar.js';
 import './vaadin-upload-icons.js';
 
@@ -44,7 +45,7 @@ import './vaadin-upload-icons.js';
  *
  * @mixes ThemableMixin
  */
-class UploadFile extends ThemableMixin(PolymerElement) {
+class UploadFile extends KeyboardMixin(ThemableMixin(PolymerElement)) {
   static get template() {
     return html`
       <style>
@@ -68,7 +69,7 @@ class UploadFile extends ThemableMixin(PolymerElement) {
         }
       </style>
 
-      <li part="row" tabindex="0">
+      <div part="row">
         <div part="info">
           <div part="done-icon" hidden$="[[!file.complete]]"></div>
           <div part="warning-icon" hidden$="[[!file.error]]"></div>
@@ -81,6 +82,8 @@ class UploadFile extends ThemableMixin(PolymerElement) {
         </div>
         <div part="commands">
           <button
+            tabindex="-1"
+            role="menuitem"
             type="button"
             part="start-button"
             file-event="file-start"
@@ -90,6 +93,8 @@ class UploadFile extends ThemableMixin(PolymerElement) {
             aria-describedby="name"
           ></button>
           <button
+            tabindex="-1"
+            role="menuitem"
             type="button"
             part="retry-button"
             file-event="file-retry"
@@ -99,6 +104,8 @@ class UploadFile extends ThemableMixin(PolymerElement) {
             aria-describedby="name"
           ></button>
           <button
+            tabindex="-1"
+            role="menuitem"
             type="button"
             part="remove-button"
             file-event="file-abort"
@@ -107,7 +114,7 @@ class UploadFile extends ThemableMixin(PolymerElement) {
             aria-describedby="name"
           ></button>
         </div>
-      </li>
+      </div>
 
       <vaadin-progress-bar
         part="progress"
@@ -129,7 +136,13 @@ class UploadFile extends ThemableMixin(PolymerElement) {
     return {
       file: Object,
 
-      i18n: Object
+      i18n: Object,
+
+      focused: {
+        reflectToAttribute: true,
+        value: false,
+        observer: '_focusedChanged'
+      }
     };
   }
 
@@ -143,10 +156,62 @@ class UploadFile extends ThemableMixin(PolymerElement) {
     ];
   }
 
+  /** @protected */
+  ready() {
+    super.ready();
+    this.addEventListener('blur', () => {
+      this.buttons.forEach((button) => button.setAttribute('tabindex', '-1'));
+    });
+  }
+
+  get buttons() {
+    return [...this.shadowRoot.querySelectorAll('button:not([hidden])')];
+  }
+
+  _onKeyDown(e) {
+    super._onKeyDown(e);
+
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') {
+      return;
+    }
+
+    const activeButtonIndex = this.buttons.findIndex((button) => button.matches(':focus'));
+    let nextActiveButtonIndex = activeButtonIndex;
+
+    if (e.key === 'ArrowRight' && activeButtonIndex < this.buttons.length - 1) {
+      nextActiveButtonIndex = activeButtonIndex + 1;
+    } else if (e.key === 'ArrowLeft' && activeButtonIndex > -1) {
+      nextActiveButtonIndex = activeButtonIndex - 1;
+    }
+
+    if (nextActiveButtonIndex !== activeButtonIndex) {
+      if (activeButtonIndex > -1) {
+        this.buttons[activeButtonIndex].setAttribute('tabindex', '-1');
+      }
+
+      if (nextActiveButtonIndex > -1) {
+        this.buttons[nextActiveButtonIndex].setAttribute('tabindex', '0');
+        this.buttons[nextActiveButtonIndex].focus();
+      } else {
+        this.focus();
+      }
+    }
+  }
+
   /** @private */
   _fileAborted(abort) {
     if (abort) {
       this._remove();
+    }
+  }
+
+  /** @private */
+  _focusedChanged(focused) {
+    if (focused) {
+      this.setAttribute('tabindex', '0');
+      this.focus();
+    } else {
+      this.removeAttribute('tabindex');
     }
   }
 
@@ -180,15 +245,7 @@ class UploadFile extends ThemableMixin(PolymerElement) {
 
   /** @private */
   _toggleHostAttribute(value, attributeName) {
-    const shouldHave = Boolean(value);
-    const has = this.hasAttribute(attributeName);
-    if (has !== shouldHave) {
-      if (shouldHave) {
-        this.setAttribute(attributeName, '');
-      } else {
-        this.removeAttribute(attributeName);
-      }
-    }
+    this.toggleAttribute(attributeName, !!value);
   }
 
   /**
