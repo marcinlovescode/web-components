@@ -171,11 +171,17 @@ class UploadFile extends KeyboardMixin(ThemableMixin(PolymerElement)) {
   _onKeyDown(e) {
     super._onKeyDown(e);
 
+    const activeButtonIndex = this.buttons.findIndex((button) => button.matches(':focus'));
+
+    if (activeButtonIndex > -1 && e.key === 'Escape') {
+      this.focus();
+      e.stopPropagation();
+    }
+
     if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') {
       return;
     }
 
-    const activeButtonIndex = this.buttons.findIndex((button) => button.matches(':focus'));
     let nextActiveButtonIndex = activeButtonIndex;
 
     if (e.key === 'ArrowRight' && activeButtonIndex < this.buttons.length - 1) {

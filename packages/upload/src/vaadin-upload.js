@@ -93,7 +93,7 @@ class Upload extends KeyboardMixin(ElementMixin(ThemableMixin(PolymerElement))) 
             </vaadin-button>
           </slot>
         </div>
-        <div part="drop-label" hidden$="[[nodrop]]" id="dropLabelContainer">
+        <div part="drop-label" hidden$="[[nodrop]]" id="dropLabelContainer" aria-hidden="true">
           <slot name="drop-label-icon">
             <div part="drop-label-icon"></div>
           </slot>
@@ -471,6 +471,8 @@ class Upload extends KeyboardMixin(ElementMixin(ThemableMixin(PolymerElement))) 
       this.__focusedFileIndex = Math.min(this.__focusedFileIndex + 1, this.files.length - 1);
     } else if (e.key === 'ArrowUp') {
       this.__focusedFileIndex = Math.max(this.__focusedFileIndex - 1, 0);
+    } else if (e.key === 'Escape') {
+      this.$.addButton.focus();
     }
   }
 
