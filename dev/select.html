@@ -14,19 +14,15 @@
 
     <script>
       const select = document.querySelector('vaadin-select');
-      select.renderer = function(root, _, model) {
-        if (!root.firstElementChild) {
-          root.innerHTML = `
-          <vaadin-list-box>
-            <vaadin-item value="xs" disabled>XS (out of stock)</vaadin-item>
-            <vaadin-item value="s">S</vaadin-item>
-            <vaadin-item value="m">M</vaadin-item>
-            <vaadin-item value="l">L</vaadin-item>
-            <vaadin-item value="xl">XL</vaadin-item>
-          </vaadin-list-box>
-          `;
-        }
-      };
+      select.items = [
+        { value: 'recent', label: 'Most recent first', disabled: true },
+        { component: 'hr' },
+        { value: 'rating-desc', label: 'Rating: high to low' },
+        { value: 'rating-asc', label: 'Rating: low to high' },
+        { component: 'hr' },
+        { value: 'price-desc', label: 'Price: high to low' },
+        { value: 'price-desc', label: 'Price: low to high' }
+      ];
     </script>
   </body>
 </html>

@@ -15,6 +15,7 @@ import { inputFieldContainer } from '@vaadin/field-base/src/styles/input-field-c
 import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
 import { registerStyles } from '@vaadin/vaadin-themable-mixin/register-styles.js';
 import '@vaadin/input-container/src/vaadin-input-container.js';
+import { ItemsMixin } from './vaadin-select-items-mixin.js';
 import './vaadin-select-overlay.js';
 import './vaadin-select-value-button.js';
 
@@ -108,7 +109,9 @@ registerStyles('vaadin-select', [fieldShared, inputFieldContainer], { moduleId: 
  * @mixes FieldMixin
  * @mixes DelegateFocusMixin
  */
-class Select extends DelegateFocusMixin(FieldMixin(SlotMixin(ElementMixin(ThemableMixin(PolymerElement))))) {
+class Select extends ItemsMixin(
+  DelegateFocusMixin(FieldMixin(SlotMixin(ElementMixin(ThemableMixin(PolymerElement)))))
+) {
   static get is() {
     return 'vaadin-select';
   }
