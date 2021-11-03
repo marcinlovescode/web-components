@@ -275,6 +275,37 @@ export class TextArea extends InputFieldMixin(ThemableMixin(ElementMixin(Polymer
 
     this._dispatchIronResizeEventIfNeeded('InputHeight', inputHeight);
   }
+
+  /**
+   * @protected
+   * @override
+   **/
+  _focusElementChanged(element, oldElement) {
+    super._focusElementChanged(element, oldElement);
+    this.__disabledWorkaround();
+  }
+
+  /**
+   * @protected
+   * @override
+   */
+  _disabledChanged(disabled) {
+    super._disabledChanged(disabled);
+    this.__disabledWorkaround();
+  }
+
+  /**
+   * Workaround for https://github.com/vaadin/flow-components/issues/2296
+   * @private
+   */
+  __disabledWorkaround() {
+    const element = this.inputElement;
+    if (!element) {
+      return;
+    }
+    element.tabIndex = this.disabled ? -1 : 0;
+    element.disabled = false;
+  }
 }
 
 customElements.define(TextArea.is, TextArea);
