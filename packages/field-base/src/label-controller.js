@@ -19,7 +19,7 @@ export class LabelController extends SlotController {
       'label',
       () => document.createElement('label'),
       (host, node) => {
-        node.id = `${host.localName}-${LabelController.__generateLabelId()}`;
+        node.id = `label-${host.localName}-${LabelController.__generateLabelId()}`;
         if (this.label) {
           node.textContent = this.label;
         }
