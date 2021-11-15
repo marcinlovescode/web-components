@@ -554,7 +554,9 @@ describe('field-mixin', () => {
 
   describe('aria-describedby', () => {
     beforeEach(() => {
-      element = fixtureSync(`<field-mixin-element helper-text="Helper"></field-mixin-element>`);
+      element = fixtureSync(
+        `<field-mixin-element helper-text="Helper" error-message="Error Message"></field-mixin-element>`
+      );
       label = element.querySelector('[slot=label]');
       error = element.querySelector('[slot=error-message]');
       helper = element.querySelector('[slot=helper]');
@@ -580,7 +582,7 @@ describe('field-mixin', () => {
   describe('aria-labelledby', () => {
     beforeEach(() => {
       element = fixtureSync(
-        `<field-mixin-group-element helper-text="Helper" label="Label"></field-mixin-group-element>`
+        `<field-mixin-group-element helper-text="Helper" label="Label" error-message="Error Message"></field-mixin-group-element>`
       );
       label = element.querySelector('[slot=label]');
       error = element.querySelector('[slot=error-message]');

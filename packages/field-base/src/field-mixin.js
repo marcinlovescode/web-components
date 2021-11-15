@@ -6,6 +6,7 @@
 import { animationFrame } from '@vaadin/component-base/src/async.js';
 import { Debouncer } from '@vaadin/component-base/src/debounce.js';
 import { ErrorController } from './error-controller.js';
+import { FieldAriaController } from './field-aria-controller.js';
 import { HelperController } from './helper-controller.js';
 import { LabelMixin } from './label-mixin.js';
 import { ValidateMixin } from './validate-mixin.js';
@@ -26,7 +27,8 @@ export const FieldMixin = (superclass) =>
          * @protected
          */
         ariaTarget: {
-          type: Object
+          type: Object,
+          observer: '_ariaTargetChanged'
         },
 
         /**
@@ -51,7 +53,11 @@ export const FieldMixin = (superclass) =>
     }
 
     static get observers() {
-      return ['__observeOffsetHeight(errorMessage, invalid, label, helperText)', '__invalidChanged(invalid)'];
+      return [
+        '__observeOffsetHeight(errorMessage, invalid, label, helperText)',
+        '_invalidChanged(invalid)',
+        '_requiredChanged(required)'
+      ];
     }
 
     /**
@@ -75,9 +81,15 @@ export const FieldMixin = (superclass) =>
 
       this._errorController = new ErrorController(this);
       this._helperController = new HelperController(this);
+
+      this._fieldAriaController = new FieldAriaController(this, {
+        labelController: this._labelController,
+        errorController: this._errorController,
+        helperController: this._helperController
+      });
     }
 
-    __invalidChanged(invalid, oldInvalid) {
+    _invalidChanged(invalid, oldInvalid) {
       if (oldInvalid === invalid) {
         return;
       }
@@ -101,12 +113,27 @@ export const FieldMixin = (superclass) =>
       this._helperController.setHelperText(helperText);
     }
 
+    /**
+     * @param {boolean} required
+     */
+    _requiredChanged(required) {
+      this._fieldAriaController.setRequired(required);
+    }
+
+    /**
+     * @param {HTMLElement} ariaTarget
+     */
+    _ariaTargetChanged(ariaTarget) {
+      this._fieldAriaController.setTarget(ariaTarget);
+    }
+
     /** @protected */
     ready() {
       super.ready();
 
       this.addController(this._errorController);
       this.addController(this._helperController);
+      this.addController(this._fieldAriaController);
     }
 
     /**

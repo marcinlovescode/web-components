@@ -18,7 +18,7 @@ export class HelperController {
     this.host = host;
 
     // Save generated ID to restore later
-    this.__savedHelperId = `helper-${host.localName}-${HelperController.__generateHelperId()}`;
+    this.__savedHelperId = `${this.helperIdPrefix}-${HelperController.__generateHelperId()}`;
   }
 
   hostConnected() {
@@ -65,6 +65,10 @@ export class HelperController {
         this.__applyDefaultHelper();
       }
     });
+  }
+
+  get helperIdPrefix() {
+    return `helper-${this.host.localName}`;
   }
 
   get helperNode() {

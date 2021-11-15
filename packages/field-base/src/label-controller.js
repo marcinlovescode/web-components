@@ -19,7 +19,7 @@ export class LabelController extends SlotController {
       'label',
       () => document.createElement('label'),
       (host, node) => {
-        node.id = `label-${host.localName}-${LabelController.__generateLabelId()}`;
+        node.id = `${this.labelIdPrefix}-${LabelController.__generateLabelId()}`;
         if (this.label) {
           node.textContent = this.label;
         }
@@ -42,6 +42,10 @@ export class LabelController extends SlotController {
       this.toggleHasLabelAttribute();
       this.__labelNodeObserver.observe(this.labelNode, { childList: true, subtree: true, characterData: true });
     }
+  }
+
+  get labelIdPrefix() {
+    return `label-${this.host.localName}`;
   }
 
   get labelNode() {
