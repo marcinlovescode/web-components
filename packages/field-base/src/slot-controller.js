@@ -22,13 +22,13 @@ export class SlotController {
         if (slotContent instanceof Element) {
           slotContent.setAttribute('slot', slotName);
           host.appendChild(slotContent);
-          this.__slotContent = slotContent;
+          this._slottedNode = slotContent;
         }
       } else {
-        this.__slotContent = slotted;
+        this._slottedNode = slotted;
       }
 
-      this.slotInitializer(host, this.__slotContent);
+      this.slotInitializer(host, this._slottedNode);
 
       this.__initialized = true;
     }
