@@ -6,6 +6,8 @@
 import { FlattenedNodesObserver } from '@polymer/polymer/lib/utils/flattened-nodes-observer.js';
 import { animationFrame } from '@vaadin/component-base/src/async.js';
 import { Debouncer } from '@vaadin/component-base/src/debounce.js';
+import { SlotMixin } from '@vaadin/component-base/src/slot-mixin.js';
+import { ErrorController } from './error-controller.js';
 import { LabelMixin } from './label-mixin.js';
 import { ValidateMixin } from './validate-mixin.js';
 
@@ -17,7 +19,7 @@ import { ValidateMixin } from './validate-mixin.js';
  * @mixes ValidateMixin
  */
 export const FieldMixin = (superclass) =>
-  class FieldMixinClass extends ValidateMixin(LabelMixin(superclass)) {
+  class FieldMixinClass extends ValidateMixin(LabelMixin(SlotMixin(superclass))) {
     static get properties() {
       return {
         /**
@@ -25,8 +27,7 @@ export const FieldMixin = (superclass) =>
          * @protected
          */
         ariaTarget: {
-          type: Object,
-          observer: '_ariaTargetChanged'
+          type: Object
         },
 
         /**
@@ -52,23 +53,11 @@ export const FieldMixin = (superclass) =>
       };
     }
 
-    /** @protected */
-    get slots() {
-      return {
-        ...super.slots,
-        'error-message': () => {
-          const error = document.createElement('div');
-          error.textContent = this.errorMessage;
-          return error;
-        }
-      };
-    }
-
     static get observers() {
       return [
-        '__ariaChanged(invalid, _helperId, required)',
         '__observeOffsetHeight(errorMessage, invalid, label, helperText)',
-        '_updateErrorMessage(invalid, errorMessage)'
+        '__invalidChanged(invalid)',
+        '__errorMessageChanged(errorMessage)'
       ];
     }
 
@@ -77,7 +66,7 @@ export const FieldMixin = (superclass) =>
      * @return {HTMLElement}
      */
     get _errorNode() {
-      return this._getDirectSlotChild('error-message');
+      return this._errorController.errorNode;
     }
 
     /**
@@ -88,38 +77,40 @@ export const FieldMixin = (superclass) =>
       return this._getDirectSlotChild('helper');
     }
 
-    /**
-     * @protected
-     * @return {string}
-     */
-    get _ariaAttr() {
-      return 'aria-describedby';
-    }
-
     constructor() {
       super();
 
+      this._errorController = new ErrorController(this);
+
       // Ensure every instance has unique ID
       const uniqueId = (FieldMixinClass._uniqueFieldId = 1 + FieldMixinClass._uniqueFieldId || 0);
-      this._errorId = `error-${this.localName}-${uniqueId}`;
       this._helperId = `helper-${this.localName}-${uniqueId}`;
 
       // Save generated ID to restore later
       this.__savedHelperId = this._helperId;
     }
 
+    __invalidChanged(invalid, oldInvalid) {
+      if (oldInvalid === invalid) {
+        return;
+      }
+
+      if (invalid) {
+        this._errorController.show();
+      } else {
+        this._errorController.hide();
+      }
+    }
+
+    __errorMessageChanged(errorMessage) {
+      this._errorController.setErrorMessage(errorMessage);
+    }
+
     /** @protected */
     ready() {
       super.ready();
 
-      const error = this._errorNode;
-      if (error) {
-        error.id = this._errorId;
-
-        this.__applyCustomError();
-
-        this._updateErrorMessage(this.invalid, this.errorMessage);
-      }
+      this.addController(this._errorController);
 
       const helper = this._helperNode;
       if (helper) {
@@ -166,15 +157,6 @@ export const FieldMixin = (superclass) =>
           this.__applyDefaultHelper(this.helperText);
         }
       });
-    }
-
-    /** @private */
-    __applyCustomError() {
-      const error = this.__errorMessage;
-      if (error && error !== this.errorMessage) {
-        this.errorMessage = error;
-        delete this.__errorMessage;
-      }
     }
 
     /**
@@ -267,34 +249,6 @@ export const FieldMixin = (superclass) =>
     }
 
     /**
-     * @param {boolean} invalid
-     * @param {string} errorMessage
-     * @protected
-     */
-    _updateErrorMessage(invalid, errorMessage) {
-      const error = this._errorNode;
-      if (!error) {
-        return;
-      }
-
-      // save the custom error message content
-      if (error.textContent && !errorMessage) {
-        this.__errorMessage = error.textContent.trim();
-      }
-      const hasError = Boolean(invalid && errorMessage);
-      error.textContent = hasError ? errorMessage : '';
-      this.toggleAttribute('has-error-message', hasError);
-
-      // Role alert will make the error message announce immediately
-      // as the field becomes invalid
-      if (hasError) {
-        error.setAttribute('role', 'alert');
-      } else {
-        error.removeAttribute('role');
-      }
-    }
-
-    /**
      * @param {HTMLElement} customHelper
      * @private
      */
@@ -317,69 +271,5 @@ export const FieldMixin = (superclass) =>
      */
     _helperTextChanged(helperText) {
       this.__applyDefaultHelper(helperText);
-    }
-
-    /**
-     * @param {HTMLElement} target
-     * @protected
-     */
-    _ariaTargetChanged(target) {
-      if (target) {
-        this._updateAriaAttribute(target, this.invalid, this._helperId);
-        this._updateAriaRequiredAttribute(target, this.required);
-      }
-    }
-
-    /**
-     * @param {HTMLElement} target
-     * @param {boolean} invalid
-     * @param {string} helperId
-     * @protected
-     */
-    _updateAriaAttribute(target, invalid, helperId) {
-      const attr = this._ariaAttr;
-
-      if (target && attr) {
-        // For groups, add all IDs to aria-labelledby rather than aria-describedby -
-        // that should guarantee that it's announced when the group is entered.
-        const ariaIds = attr === 'aria-describedby' ? [helperId] : [this._labelId, helperId];
-
-        // Error message ID needs to be dynamically added / removed based on the validity
-        // Otherwise assistive technologies would announce the error, even if we hide it.
-        if (invalid) {
-          ariaIds.push(this._errorId);
-        }
-
-        target.setAttribute(attr, ariaIds.join(' '));
-      }
-    }
-
-    /**
-     * @param {HTMLElement} target
-     * @param {boolean} required
-     * @protected
-     */
-    _updateAriaRequiredAttribute(target, required) {
-      if (target !== this) {
-        // native <input> or <textarea>, required is enough
-        return;
-      }
-
-      if (required) {
-        target.setAttribute('aria-required', true);
-      } else {
-        target.removeAttribute('aria-required');
-      }
-    }
-
-    /**
-     * @param {boolean} invalid
-     * @param {string} helperId
-     * @param {boolean} required
-     * @private
-     */
-    __ariaChanged(invalid, helperId, required) {
-      this._updateAriaAttribute(this.ariaTarget, invalid, helperId);
-      this._updateAriaRequiredAttribute(this.ariaTarget, required);
     }
   };
