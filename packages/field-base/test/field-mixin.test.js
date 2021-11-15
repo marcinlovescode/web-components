@@ -64,9 +64,9 @@ customElements.define(
       `;
     }
 
-    get _ariaAttr() {
-      return 'aria-labelledby';
-    }
+    // get _ariaAttr() {
+    //   return 'aria-labelledby';
+    // }
 
     ready() {
       super.ready();
@@ -579,7 +579,9 @@ describe('field-mixin', () => {
 
   describe('aria-labelledby', () => {
     beforeEach(() => {
-      element = fixtureSync(`<field-mixin-group-element helper-text="Helper"></field-mixin-group-element>`);
+      element = fixtureSync(
+        `<field-mixin-group-element helper-text="Helper" label="Label"></field-mixin-group-element>`
+      );
       label = element.querySelector('[slot=label]');
       error = element.querySelector('[slot=error-message]');
       helper = element.querySelector('[slot=helper]');
