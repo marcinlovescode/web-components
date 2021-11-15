@@ -31,7 +31,7 @@ export const SlotLabelMixin = dedupingMixin(
           // only after `LabelMixin` is initialized which means
           // we should manually toggle the `has-label` attribute
           // respecting the new label content.
-          this._toggleHasLabelAttribute();
+          this._labelController.toggleHasLabelAttribute();
         }
       }
     }

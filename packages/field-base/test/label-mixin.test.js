@@ -37,25 +37,6 @@ describe('label-mixin', () => {
       expect(id.endsWith(element.constructor._uniqueLabelId)).to.be.true;
     });
 
-    describe('label property', () => {
-      it('should be undefined by default', () => {
-        expect(element.label).to.be.undefined;
-      });
-
-      it('should reflect label attribute to the property', () => {
-        element.setAttribute('label', 'Email');
-        expect(element.label).to.equal('Email');
-
-        element.removeAttribute('label');
-        expect(element.label).to.equal(null);
-      });
-
-      it('should update label content on property change', () => {
-        element.label = 'Email';
-        expect(label.textContent).to.equal('Email');
-      });
-    });
-
     describe('has-label attribute', () => {
       it('should not set the attribute by default', () => {
         expect(element.hasAttribute('has-label')).to.be.false;
@@ -77,6 +58,43 @@ describe('label-mixin', () => {
       it('should not set the attribute when label is empty', () => {
         element.label = '';
         expect(element.hasAttribute('has-label')).to.be.false;
+      });
+    });
+  });
+
+  describe('label property', () => {
+    describe('default', () => {
+      beforeEach(() => {
+        element = fixtureSync(`<label-mixin-element></label-mixin-element>`);
+        label = element.querySelector('[slot=label]');
+      });
+
+      it('should be undefined by default', () => {
+        expect(element.label).to.be.undefined;
+      });
+
+      it('should reflect label attribute to the property', () => {
+        element.setAttribute('label', 'Email');
+        expect(element.label).to.equal('Email');
+
+        element.removeAttribute('label');
+        expect(element.label).to.equal(null);
+      });
+
+      it('should update label content on property change', () => {
+        element.label = 'Email';
+        expect(label.textContent).to.equal('Email');
+      });
+    });
+
+    describe('initially set', () => {
+      beforeEach(() => {
+        element = fixtureSync(`<label-mixin-element label="Email"></label-mixin-element>`);
+        label = element.querySelector('[slot=label]');
+      });
+
+      it('should render label', () => {
+        expect(label.textContent).to.equal('Email');
       });
     });
   });
