@@ -19,7 +19,7 @@ export class ErrorController extends SlotController {
       'error-message',
       () => document.createElement('div'),
       (host, node) => {
-        node.id = `${host.localName}-${ErrorController.__generateErrorId()}`;
+        node.id = `error-${host.localName}-${ErrorController.__generateErrorId()}`;
         this.__updateErrorMessage();
       }
     ]);
