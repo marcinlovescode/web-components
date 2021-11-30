@@ -4,6 +4,7 @@ import {
   OverlayEscapePressEvent,
   OverlayOpenedChangedEvent,
   OverlayOpenEvent,
+  OverlayOpeningFinishedEvent,
   OverlayOutsideClickEvent
 } from '../../vaadin-overlay.js';
 
@@ -18,6 +19,10 @@ overlay.addEventListener('opened-changed', (event) => {
 
 overlay.addEventListener('vaadin-overlay-open', (event) => {
   assertType<OverlayOpenEvent>(event);
+});
+
+overlay.addEventListener('vaadin-overlay-opening-finished', (event) => {
+  assertType<OverlayOpeningFinishedEvent>(event);
 });
 
 overlay.addEventListener('vaadin-overlay-close', (event) => {

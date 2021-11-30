@@ -93,6 +93,7 @@ import { FocusablesHelper } from './vaadin-focusables-helper.js';
  *
  * @fires {CustomEvent} opened-changed - Fired when the `opened` property changes.
  * @fires {CustomEvent} vaadin-overlay-open - Fired after the overlay is opened.
+ * @fires {CustomEvent} vaadin-overlay-opening-finished - Fired when the overlay has finished with the opening sequence (including possible animation).
  * @fires {CustomEvent} vaadin-overlay-close - Fired before the overlay will be closed. If canceled the closing of the overlay is canceled as well.
  * @fires {CustomEvent} vaadin-overlay-outside-click - Fired before the overlay will be closed on outside click. If canceled the closing of the overlay is canceled as well.
  * @fires {CustomEvent} vaadin-overlay-escape-press - Fired before the overlay will be closed on ESC button press. If canceled the closing of the overlay is canceled as well.
@@ -540,7 +541,6 @@ class OverlayElement extends ThemableMixin(DirMixin(PolymerElement)) {
     if (opened) {
       // Store focused node.
       this.__restoreFocusNode = this._getActiveElement();
-      this._animatedOpening();
 
       afterNextRender(this, () => {
         if (this.focusTrap && !this.contains(document.activeElement)) {
@@ -550,6 +550,8 @@ class OverlayElement extends ThemableMixin(DirMixin(PolymerElement)) {
         const evt = new CustomEvent('vaadin-overlay-open', { bubbles: true });
         this.dispatchEvent(evt);
       });
+
+      this._animatedOpening();
 
       if (!this.modeless) {
         this._addGlobalListeners();
@@ -610,7 +612,12 @@ class OverlayElement extends ThemableMixin(DirMixin(PolymerElement)) {
     }
   }
 
-  /** @protected */
+  /**
+   * @event vaadin-overlay-opening-finished
+   * Fired once the overlay has fully finished opening.
+   *
+   * @protected
+   */
   _animatedOpening() {
     if (this.parentNode === document.body && this.hasAttribute('closing')) {
       this._flushAnimation('closing');
@@ -625,6 +632,10 @@ class OverlayElement extends ThemableMixin(DirMixin(PolymerElement)) {
       document.addEventListener('iron-overlay-canceled', this._boundIronOverlayCanceledListener);
 
       this.removeAttribute('opening');
+
+      afterNextRender(this, () => {
+        this.dispatchEvent(new CustomEvent('vaadin-overlay-opening-finished'));
+      });
     };
 
     if (this._shouldAnimate()) {

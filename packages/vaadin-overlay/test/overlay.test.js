@@ -192,6 +192,28 @@ describe('vaadin-overlay', () => {
     });
   });
 
+  describe('opening', () => {
+    /** @type { import('../vaadin-overlay').OverlayElement } */
+    let overlay;
+
+    beforeEach(() => {
+      overlay = fixtureSync('<vaadin-overlay></vaadin-overlay>');
+      overlay.renderer = (root) => (root.textContent = 'overlay content');
+    });
+
+    it('should dispatch an open event before opening finished event', async () => {
+      const spy = sinon.spy();
+      overlay.addEventListener('vaadin-overlay-open', spy);
+      overlay.addEventListener('vaadin-overlay-opening-finished', spy);
+      overlay.opened = true;
+      await oneEvent(overlay, 'vaadin-overlay-opening-finished');
+
+      expect(spy.callCount).to.equal(2);
+      expect(spy.getCall(0).args[0].type).to.equal('vaadin-overlay-open');
+      expect(spy.getCall(1).args[0].type).to.equal('vaadin-overlay-opening-finished');
+    });
+  });
+
   describe('click', () => {
     let parent, overlay, overlayPart, backdrop;
 

@@ -19,6 +19,11 @@ export type OverlayOpenedChangedEvent = CustomEvent<{ value: boolean }>;
 export type OverlayOpenEvent = CustomEvent;
 
 /**
+ * Fired when the overlay has finished with the opening sequence (including possible animation).
+ */
+export type OverlayOpeningFinishedEvent = CustomEvent;
+
+/**
  * Fired before the overlay will be closed.
  * If canceled the closing of the overlay is canceled as well.
  */
@@ -39,6 +44,7 @@ export type OverlayEscapePressEvent = CustomEvent<{ sourceEvent: KeyboardEvent }
 export interface OverlayElementEventMap {
   'opened-changed': OverlayOpenedChangedEvent;
   'vaadin-overlay-open': OverlayOpenEvent;
+  'vaadin-overlay-opening-finished': OverlayOpeningFinishedEvent;
   'vaadin-overlay-close': OverlayCloseEvent;
   'vaadin-overlay-outside-click': OverlayOutsideClickEvent;
   'vaadin-overlay-escape-press': OverlayEscapePressEvent;
@@ -132,6 +138,7 @@ export type OverlayEventMap = HTMLElementEventMap & OverlayElementEventMap;
  *
  * @fires {CustomEvent} opened-changed - Fired when the `opened` property changes.
  * @fires {CustomEvent} vaadin-overlay-open - Fired after the overlay is opened.
+ * @fires {CustomEvent} vaadin-overlay-opening-finished - Fired when the overlay has finished with the opening sequence (including possible animation).
  * @fires {CustomEvent} vaadin-overlay-close - Fired before the overlay will be closed. If canceled the closing of the overlay is canceled as well.
  * @fires {CustomEvent} vaadin-overlay-outside-click - Fired before the overlay will be closed on outside click. If canceled the closing of the overlay is canceled as well.
  * @fires {CustomEvent} vaadin-overlay-escape-press - Fired before the overlay will be closed on ESC button press. If canceled the closing of the overlay is canceled as well.

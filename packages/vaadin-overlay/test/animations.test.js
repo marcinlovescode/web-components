@@ -1,5 +1,5 @@
 import { expect } from '@esm-bundle/chai';
-import { escKeyDown, fixtureSync } from '@vaadin/testing-helpers';
+import { escKeyDown, fixtureSync, listenOnce } from '@vaadin/testing-helpers';
 import '../vaadin-overlay.js';
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
@@ -77,21 +77,7 @@ customElements.define(
 );
 
 function afterOverlayOpeningFinished(overlay, callback) {
-  const observer = new MutationObserver((mutations, observer) => {
-    for (let i = 0; i < mutations.length; i++) {
-      const mutation = mutations[i];
-      if (mutation.attributeName === 'opening') {
-        const target = mutation.target;
-        const hasFinishedOpening = target.hasAttribute('opened') && !target.hasAttribute('opening');
-        if (hasFinishedOpening) {
-          observer.disconnect();
-          afterNextRender(overlay, callback);
-          return;
-        }
-      }
-    }
-  });
-  observer.observe(overlay, { attributes: true, attributeFilter: ['opening'] });
+  listenOnce(overlay, 'vaadin-overlay-opening-finished', () => callback());
 }
 
 function afterOverlayClosingFinished(overlay, callback) {
