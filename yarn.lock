@@ -9110,10 +9110,10 @@ pkg-dir@4.2.0, pkg-dir@^4.2.0:
   dependencies:
     find-up "^4.0.0"
 
-playwright-core@=1.17.0-next-alpha-nov-5-2021:
-  version "1.17.0-next-alpha-nov-5-2021"
-  resolved "https://registry.yarnpkg.com/playwright-core/-/playwright-core-1.17.0-next-alpha-nov-5-2021.tgz#1cf666ba769f6e44161c73dccf516ceb3be9e78e"
-  integrity sha512-kWfzHUfD1jRWvLQ+PBuSb5qsnJQ78AADcCJS4Vgt5GnrF2Gp+4jLPdJMY+oWhB/6fETTzABidY0OQeyjq34UWA==
+playwright-core@=1.17.0:
+  version "1.17.0"
+  resolved "https://registry.yarnpkg.com/playwright-core/-/playwright-core-1.17.0.tgz#4bb36367ea890e337f6074b866065be6d3e7d66d"
+  integrity sha512-9ZzKZwmK6G7O9+jtvIurL8efIbJQu3oW0kI4uuNreY3O2jQDWH6xNnD27HCaJN1/tHnw/OmdUC2AmMDZv3vNhQ==
   dependencies:
     commander "^8.2.0"
     debug "^4.1.1"
@@ -9132,12 +9132,12 @@ playwright-core@=1.17.0-next-alpha-nov-5-2021:
     yauzl "^2.10.0"
     yazl "^2.5.1"
 
-playwright@1.17.0-next-alpha-nov-5-2021, playwright@^1.14.0:
-  version "1.17.0-next-alpha-nov-5-2021"
-  resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.17.0-next-alpha-nov-5-2021.tgz#728c911b64255288086353581880462473779126"
-  integrity sha512-M3rURKXd+8otyz1lEt0qmYBFq06Rh+l+WnMQHD3kBAYoCONawVthtRFzmqRcvd/3uAPx1bQigqnLTyYgcmaYXw==
+playwright@1.17.0, playwright@^1.14.0:
+  version "1.17.0"
+  resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.17.0.tgz#ad9918888737a1f310027a1fe2fd27f86ddd5e7e"
+  integrity sha512-rBBrdj5+iYFBSsMa7glK3MBaxkcXxHN7uW6pY7PzTB7xtGFTfdK0h0BPB7/vWiVIGOvz4Hy9g2UJNaZDHkAmgA==
   dependencies:
-    playwright-core "=1.17.0-next-alpha-nov-5-2021"
+    playwright-core "=1.17.0"
 
 plexer@^2.0.0:
   version "2.0.0"

@@ -73,6 +73,6 @@
     "packages/*"
   ],
   "resolutions": {
-    "playwright": "1.17.0-next-alpha-nov-5-2021"
+    "playwright": "1.17.0"
   }
 }
