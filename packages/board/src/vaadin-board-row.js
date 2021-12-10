@@ -3,13 +3,12 @@
  * Copyright (c) 2017 - 2021 Vaadin Ltd
  * This program is available under Commercial Vaadin Developer License 4.0, available at https://vaadin.com/license/cvdl-4.0.
  */
-import { IronResizableBehavior } from '@polymer/iron-resizable-behavior/iron-resizable-behavior.js';
 import { DomIf } from '@polymer/polymer/lib/elements/dom-if.js';
 import { DomRepeat } from '@polymer/polymer/lib/elements/dom-repeat.js';
-import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
 import { afterNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
 import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
+import { IronResizableMixin } from '@vaadin/component-base/src/iron-resizable-mixin.js';
 
 const CLASSES = {
   SMALL: 'small',
@@ -54,7 +53,7 @@ const CLASSES = {
  * @extends HTMLElement
  * @mixes ElementMixin
  */
-class BoardRow extends ElementMixin(mixinBehaviors([IronResizableBehavior], PolymerElement)) {
+class BoardRow extends ElementMixin(IronResizableMixin(PolymerElement)) {
   static get template() {
     return html`
       <style>

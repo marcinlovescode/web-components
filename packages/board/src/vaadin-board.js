@@ -5,10 +5,9 @@
  */
 import '@vaadin/vaadin-license-checker/vaadin-license-checker.js';
 import './vaadin-board-row.js';
-import { IronResizableBehavior } from '@polymer/iron-resizable-behavior/iron-resizable-behavior.js';
-import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
 import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
 import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
+import { IronResizableMixin } from '@vaadin/component-base/src/iron-resizable-mixin.js';
 
 /**
  * `<vaadin-board>` is a web component to create flexible responsive layouts
@@ -32,7 +31,7 @@ import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
  * @extends HTMLElement
  * @mixes ElementMixin
  */
-class Board extends ElementMixin(mixinBehaviors([IronResizableBehavior], PolymerElement)) {
+class Board extends ElementMixin(IronResizableMixin(PolymerElement)) {
   static get template() {
     return html`
       <style>

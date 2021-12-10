@@ -6,9 +6,8 @@
 import './vaadin-combo-box-item.js';
 import './vaadin-combo-box-overlay.js';
 import './vaadin-combo-box-scroller.js';
-import { IronResizableBehavior } from '@polymer/iron-resizable-behavior/iron-resizable-behavior.js';
-import { mixinBehaviors } from '@polymer/polymer/lib/legacy/class.js';
 import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
+import { IronResizableMixin } from '@vaadin/component-base/src/iron-resizable-mixin.js';
 
 /**
  * Element for internal use only.
@@ -16,7 +15,7 @@ import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
  * @extends HTMLElement
  * @private
  */
-export class ComboBoxDropdown extends mixinBehaviors(IronResizableBehavior, PolymerElement) {
+export class ComboBoxDropdown extends IronResizableMixin(PolymerElement) {
   static get is() {
     return 'vaadin-combo-box-dropdown';
   }
