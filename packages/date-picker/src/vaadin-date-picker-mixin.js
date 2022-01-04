@@ -334,8 +334,8 @@ export const DatePickerMixin = (subclass) =>
 
     static get observers() {
       return [
-        '_selectedDateChanged(_selectedDate, i18n.formatDate)',
-        '_focusedDateChanged(_focusedDate, i18n.formatDate)'
+        '_selectedDateChanged(_selectedDate, i18n.formatDate)'
+        // '_focusedDateChanged(_focusedDate, i18n.formatDate)'
         // '_announceFocusedDate(_focusedDate, opened, _ignoreAnnounce)'
       ];
     }
@@ -626,15 +626,15 @@ export const DatePickerMixin = (subclass) =>
     }
 
     /** @private */
-    _focusedDateChanged(focusedDate, formatDate) {
-      if (focusedDate === undefined || formatDate === undefined) {
-        return;
-      }
-      this.__userInputOccurred = true;
-      if (!this._ignoreFocusedDateChange && !this._noInput) {
-        this._applyInputValue(focusedDate);
-      }
-    }
+    // _focusedDateChanged(focusedDate, formatDate) {
+    //   if (focusedDate === undefined || formatDate === undefined) {
+    //     return;
+    //   }
+    //   this.__userInputOccurred = true;
+    //   if (!this._ignoreFocusedDateChange && !this._noInput) {
+    //     this._applyInputValue(focusedDate);
+    //   }
+    // }
 
     /** @private */
     __getOverlayTheme(theme, overlayInitialized) {
@@ -892,9 +892,7 @@ export const DatePickerMixin = (subclass) =>
           // prevent scrolling the page with arrows
           e.preventDefault();
 
-          if (this.opened) {
-            this._overlayContent._onKeydown(e);
-          } else {
+          if (!this.opened) {
             this._focusOverlayOnOpen = true;
             this.open();
           }
