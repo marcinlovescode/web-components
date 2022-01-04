@@ -320,9 +320,9 @@ export const DatePickerMixin = (subclass) =>
         },
 
         /** @private */
-        _ignoreAnnounce: {
-          value: true
-        },
+        // _ignoreAnnounce: {
+        //   value: true
+        // },
 
         /** @private */
         _focusOverlayOnOpen: Boolean,
@@ -335,8 +335,8 @@ export const DatePickerMixin = (subclass) =>
     static get observers() {
       return [
         '_selectedDateChanged(_selectedDate, i18n.formatDate)',
-        '_focusedDateChanged(_focusedDate, i18n.formatDate)',
-        '_announceFocusedDate(_focusedDate, opened, _ignoreAnnounce)'
+        '_focusedDateChanged(_focusedDate, i18n.formatDate)'
+        // '_announceFocusedDate(_focusedDate, opened, _ignoreAnnounce)'
       ];
     }
 
@@ -710,7 +710,7 @@ export const DatePickerMixin = (subclass) =>
       }
 
       if (this._focusOverlayOnOpen) {
-        this._overlayContent.focus();
+        this._overlayContent.focusDateElement();
         this._focusOverlayOnOpen = false;
       } else {
         this._focus();
@@ -720,7 +720,7 @@ export const DatePickerMixin = (subclass) =>
         this.focusElement.blur();
       }
 
-      this._ignoreAnnounce = false;
+      // this._ignoreAnnounce = false;
     }
 
     // A hack needed for iOS to prevent dropdown from being clipped in an
@@ -765,7 +765,7 @@ export const DatePickerMixin = (subclass) =>
 
     /** @protected */
     _onOverlayClosed() {
-      this._ignoreAnnounce = true;
+      // this._ignoreAnnounce = true;
 
       window.removeEventListener('scroll', this._boundOnScroll, true);
 
@@ -893,7 +893,6 @@ export const DatePickerMixin = (subclass) =>
           e.preventDefault();
 
           if (this.opened) {
-            this._overlayContent.focus();
             this._overlayContent._onKeydown(e);
           } else {
             this._focusOverlayOnOpen = true;
@@ -945,8 +944,7 @@ export const DatePickerMixin = (subclass) =>
             if (e.shiftKey) {
               this._overlayContent.focusCancel();
             } else {
-              this._overlayContent.focus();
-              this._overlayContent.revealDate(this._focusedDate);
+              this._overlayContent.focusDate(this._focusedDate);
             }
           }
           break;
@@ -995,11 +993,11 @@ export const DatePickerMixin = (subclass) =>
     }
 
     /** @private */
-    _announceFocusedDate(_focusedDate, opened, _ignoreAnnounce) {
-      if (opened && !_ignoreAnnounce) {
-        this._overlayContent.announceFocusedDate();
-      }
-    }
+    // _announceFocusedDate(_focusedDate, opened, _ignoreAnnounce) {
+    //   if (opened && !_ignoreAnnounce) {
+    //     this._overlayContent.announceFocusedDate();
+    //   }
+    // }
 
     /** @private */
     get _overlayContent() {
