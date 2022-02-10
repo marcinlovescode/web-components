@@ -300,6 +300,7 @@ class Grid extends ElementMixin(
 
   static get observers() {
     return [
+      '__disabledChanged(disabled)',
       '_columnTreeChanged(_columnTree, _columnTree.*)',
       '_effectiveSizeChanged(_effectiveSize, __virtualizer, _hasData, _columnTree)'
     ];
@@ -371,6 +372,11 @@ class Grid extends ElementMixin(
       __gridElement: {
         type: Boolean,
         value: true
+      },
+
+      disabled: {
+        type: Boolean,
+        reflectToAttribute: true
       }
     };
   }
@@ -378,6 +384,16 @@ class Grid extends ElementMixin(
   constructor() {
     super();
     this.addEventListener('animationend', this._onAnimationEnd);
+  }
+
+  __disabledChanged(disabled) {
+    if (disabled) {
+      this.setAttribute('aria-disabled', 'true');
+      this.setAttribute('tabindex', '-1');
+    } else {
+      this.removeAttribute('aria-disabled');
+      this.removeAttribute('tabindex');
+    }
   }
 
   /** @protected */
