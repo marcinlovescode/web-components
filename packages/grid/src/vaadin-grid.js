@@ -9,6 +9,7 @@ import { beforeNextRender } from '@polymer/polymer/lib/utils/render-status.js';
 import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
 import { isAndroid, isFirefox, isIOS, isSafari, isTouch } from '@vaadin/component-base/src/browser-utils.js';
 import { ElementMixin } from '@vaadin/component-base/src/element-mixin.js';
+import { TabindexMixin } from '@vaadin/component-base/src/tabindex-mixin';
 import { processTemplates } from '@vaadin/component-base/src/templates.js';
 import { Virtualizer } from '@vaadin/component-base/src/virtualizer.js';
 import { ThemableMixin } from '@vaadin/vaadin-themable-mixin/vaadin-themable-mixin.js';
@@ -256,7 +257,9 @@ class Grid extends ElementMixin(
                       A11yMixin(
                         FilterMixin(
                           ColumnReorderingMixin(
-                            ColumnResizingMixin(EventContextMixin(DragAndDropMixin(StylingMixin(PolymerElement))))
+                            ColumnResizingMixin(
+                              EventContextMixin(DragAndDropMixin(StylingMixin(TabindexMixin(PolymerElement))))
+                            )
                           )
                         )
                       )
@@ -300,7 +303,6 @@ class Grid extends ElementMixin(
 
   static get observers() {
     return [
-      '__disabledChanged(disabled)',
       '_columnTreeChanged(_columnTree, _columnTree.*)',
       '_effectiveSizeChanged(_effectiveSize, __virtualizer, _hasData, _columnTree)'
     ];
@@ -338,6 +340,10 @@ class Grid extends ElementMixin(
         value: isTouch
       },
 
+      tabindex: {
+        value: undefined
+      },
+
       /**
        * If true, the grid's height is defined by its rows.
        *
@@ -372,11 +378,6 @@ class Grid extends ElementMixin(
       __gridElement: {
         type: Boolean,
         value: true
-      },
-
-      disabled: {
-        type: Boolean,
-        reflectToAttribute: true
       }
     };
   }
@@ -384,16 +385,6 @@ class Grid extends ElementMixin(
   constructor() {
     super();
     this.addEventListener('animationend', this._onAnimationEnd);
-  }
-
-  __disabledChanged(disabled) {
-    if (disabled) {
-      this.setAttribute('aria-disabled', 'true');
-      this.setAttribute('tabindex', '-1');
-    } else {
-      this.removeAttribute('aria-disabled');
-      this.removeAttribute('tabindex');
-    }
   }
 
   /** @protected */
